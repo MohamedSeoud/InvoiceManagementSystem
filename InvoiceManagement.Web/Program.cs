@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddRazorPages();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddControllersWithViews();
@@ -16,13 +15,10 @@ builder.Services.AddControllersWithViews();
 
 
 
-// Configure infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Configure application layer
 builder.Services.AddApplication();
 
-// Configure API HTTP client
 builder.Services.AddHttpClient("InvoiceAPI", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ??
@@ -47,7 +43,6 @@ builder.Services.AddValidatorsFromAssemblyContaining<InvoiceDtoValidator>();
 builder.Services.AddScoped<IValidator<InvoiceDto>, InvoiceDtoValidator>();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -67,7 +62,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 
-// Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

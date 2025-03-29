@@ -3,42 +3,41 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using InvoiceManagement.Application.DTOs;
 using InvoiceManagement.Application.Interfaces;
 
-namespace InvoiceManagement.Web.Pages.Invoices
+namespace InvoiceManagement.Web.Pages.Invoices;
+
+public class DeleteModel : PageModel
 {
-    public class DeleteModel : PageModel
+    private readonly IInvoiceService _invoiceService;
+
+    public DeleteModel(IInvoiceService invoiceService)
     {
-        private readonly IInvoiceService _invoiceService;
+        _invoiceService = invoiceService;
+    }
 
-        public DeleteModel(IInvoiceService invoiceService)
+    [BindProperty]
+    public InvoiceDto Invoice { get; set; } = new InvoiceDto();
+
+    public async Task<IActionResult> OnGetAsync([FromQuery] int id)
+    {
+        int Id = Convert.ToInt16(id);
+        Invoice = await _invoiceService.GetInvoiceByIdAsync(Id);
+
+        if (Invoice == null)
         {
-            _invoiceService = invoiceService;
+            return NotFound();
         }
 
-        [BindProperty]
-        public InvoiceDto Invoice { get; set; } = new InvoiceDto();
+        return Page();
+    }
 
-        public async Task<IActionResult> OnGetAsync([FromQuery] int id)
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (Invoice.Id == 0)
         {
-            int Id = Convert.ToInt16(id);
-            Invoice = await _invoiceService.GetInvoiceByIdAsync(Id);
-
-            if (Invoice == null)
-            {
-                return NotFound();
-            }
-
-            return Page();
+            return BadRequest();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (Invoice.Id == 0)
-            {
-                return BadRequest();
-            }
-
-            await _invoiceService.DeleteInvoiceAsync(Invoice.Id);
-            return RedirectToPage("/Invoices/Index");
-        }
+        await _invoiceService.DeleteInvoiceAsync(Invoice.Id);
+        return RedirectToPage("/Invoices/Index");
     }
 }
