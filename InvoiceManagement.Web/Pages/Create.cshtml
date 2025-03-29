@@ -1,0 +1,310 @@
+﻿@page
+@model InvoiceManagement.Web.Pages.Invoices.CreateModel
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Create Invoice</h2>
+        <a href="/" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to List
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Invoice Details</h5>
+        </div>
+        <div class="card-body">
+            <form id="invoiceForm" method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Invoice Number *</label>
+                            <input name="Invoice.InvoiceNumber" class="form-control" type="number"
+                                   required data-val="true" data-val-required="Invoice Number is required." />
+                            <span class="text-danger" data-valmsg-for="Invoice.InvoiceNumber" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Date *</label>
+                            <input name="Invoice.Date" type="date" class="form-control"
+                                   required data-val="true" data-val-required="Date is required." />
+                            <span class="text-danger" data-valmsg-for="Invoice.Date" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Customer Name *</label>
+                            <input name="Invoice.CustomerName" class="form-control"
+                                   required data-val="true" data-val-required="Customer Name is required." />
+                            <span class="text-danger" data-valmsg-for="Invoice.CustomerName" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mb-3"><i class="fas fa-list-ul me-2"></i>Items</h4>
+                <div id="itemsContainer">
+                    @if (Model.Invoice?.Items != null && Model.Invoice.Items.Count > 0)
+                    {
+                        for (int i = 0; i < Model.Invoice.Items.Count; i++)
+                        {
+                            <div class="item-row row mb-3 g-3">
+                                <div class="col-md-5">
+                                    <label class="form-label">Description *</label>
+                                    <input name="Invoice.Items[@i].Description" class="form-control"
+                                           required data-val="true" data-val-required="Description is required."
+                                           value="@Model.Invoice.Items[i].Description" />
+                                    <span class="text-danger" data-valmsg-for="Invoice.Items[@i].Description" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Quantity *</label>
+                                    <input name="Invoice.Items[@i].Quantity" class="form-control quantity"
+                                           type="number" min="1" required data-val="true"
+                                           data-val-required="Quantity is required."
+                                           value="@Model.Invoice.Items[i].Quantity" />
+                                    <span class="text-danger" data-valmsg-for="Invoice.Items[@i].Quantity" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Unit Price *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input name="Invoice.Items[@i].UnitPrice" class="form-control unit-price"
+                                               type="number" min="0.01" step="0.01" required data-val="true"
+                                               data-val-required="Unit Price is required."
+                                               value="@Model.Invoice.Items[i].UnitPrice" />
+                                    </div>
+                                    <span class="text-danger" data-valmsg-for="Invoice.Items[@i].UnitPrice" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input name="Invoice.Items[@i].Amount" class="form-control amount"
+                                               readonly value="@(Model.Invoice.Items[i].Quantity * Model.Invoice.Items[i].UnitPrice)" />
+                                    </div>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger remove-item">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="item-row row mb-3 g-3">
+                            <div class="col-md-5">
+                                <label class="form-label">Description *</label>
+                                <input name="Invoice.Items[0].Description" class="form-control"
+                                       required data-val="true" data-val-required="Description is required." />
+                                <span class="text-danger" data-valmsg-for="Invoice.Items[0].Description" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Quantity *</label>
+                                <input name="Invoice.Items[0].Quantity" class="form-control quantity"
+                                       type="number" min="1" required data-val="true"
+                                       data-val-required="Quantity is required." value="1" />
+                                <span class="text-danger" data-valmsg-for="Invoice.Items[0].Quantity" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Unit Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input name="Invoice.Items[0].UnitPrice" class="form-control unit-price"
+                                           type="number" min="0.01" step="0.01" required data-val="true"
+                                           data-val-required="Unit Price is required." value="0.01" />
+                                </div>
+                                <span class="text-danger" data-valmsg-for="Invoice.Items[0].UnitPrice" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input name="Invoice.Items[0].Amount" class="form-control amount" readonly value="0.01" />
+                                </div>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-item">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <button type="button" id="addItem" class="btn btn-secondary">
+                            <i class="fas fa-plus me-1"></i>Add Item
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 offset-md-8">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0">Total Amount:</h5>
+                                    <h4 class="mb-0 text-primary" id="totalAmount">$0.00</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-1"></i>Save Invoice
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Add new item
+            $('#addItem').click(function () {
+                var index = $('.item-row').length;
+                var newItem = `
+                    <div class="item-row row mb-3 g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Description *</label>
+                            <input name="Invoice.Items[${index}].Description" class="form-control"
+                                   required data-val="true" data-val-required="Description is required." />
+                            <span class="text-danger" data-valmsg-for="Invoice.Items[${index}].Description" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Quantity *</label>
+                            <input name="Invoice.Items[${index}].Quantity" class="form-control quantity"
+                                   type="number" min="1" required data-val="true"
+                                   data-val-required="Quantity is required." value="1" />
+                            <span class="text-danger" data-valmsg-for="Invoice.Items[${index}].Quantity" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Unit Price *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input name="Invoice.Items[${index}].UnitPrice" class="form-control unit-price"
+                                       type="number" min="0.01" step="0.01" required data-val="true"
+                                       data-val-required="Unit Price is required." value="0.01" />
+                            </div>
+                            <span class="text-danger" data-valmsg-for="Invoice.Items[${index}].UnitPrice" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input name="Invoice.Items[${index}].Amount" class="form-control amount" readonly value="0.01" />
+                            </div>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-item">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                $('#itemsContainer').append(newItem);
+
+                // Reinitialize validation
+                var form = $('#invoiceForm');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+
+                calculateTotal();
+            });
+
+            // Remove item
+            $(document).on('click', '.remove-item', function () {
+                if ($('.item-row').length > 1) {
+                    $(this).closest('.item-row').remove();
+                    reindexItems();
+                    calculateTotal();
+                } else {
+                    alert('At least one item is required.');
+                }
+            });
+
+            // Calculate amount when quantity or price changes
+            $(document).on('input', '.quantity, .unit-price', function () {
+                var row = $(this).closest('.item-row');
+                var quantity = parseFloat(row.find('.quantity').val()) || 0;
+                var unitPrice = parseFloat(row.find('.unit-price').val()) || 0;
+                var amount = quantity * unitPrice;
+                row.find('.amount').val(amount.toFixed(2));
+                calculateTotal();
+            });
+                    $('#invoiceForm').on('submit', function (e) {
+
+            if (!this.checkValidity()) {
+                            e.preventDefault();
+
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                return;
+            }
+
+            // Submit form via AJAX
+            $.ajax({
+                url: '/api/invoices',
+                type: 'POST',
+                data: JSON.stringify($(this).serializeObject()),
+                contentType: 'application/json',
+                success: function (response) {
+                    window.location.href = '/'; // Redirect to home after success
+                },
+                error: function (xhr) {
+                    alert('Error saving invoice: ' + xhr.responseText);
+                }
+            });
+        });
+
+            // Reindex items for model binding
+            function reindexItems() {
+                $('.item-row').each(function (index) {
+                    $(this).find('input[name*="Description"]').attr('name', `Invoice.Items[${index}].Description`);
+                    $(this).find('input[name*="Quantity"]').attr('name', `Invoice.Items[${index}].Quantity`);
+                    $(this).find('input[name*="UnitPrice"]').attr('name', `Invoice.Items[${index}].UnitPrice`);
+                    $(this).find('input[name*="Amount"]').attr('name', `Invoice.Items[${index}].Amount`);
+
+                    // Update validation message targets
+                    $(this).find('span[data-valmsg-for*="Description"]').attr('data-valmsg-for', `Invoice.Items[${index}].Description`);
+                    $(this).find('span[data-valmsg-for*="Quantity"]').attr('data-valmsg-for', `Invoice.Items[${index}].Quantity`);
+                    $(this).find('span[data-valmsg-for*="UnitPrice"]').attr('data-valmsg-for', `Invoice.Items[${index}].UnitPrice`);
+                });
+
+                // Reinitialize validation
+                var form = $('#invoiceForm');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            }
+
+            // Calculate total amount
+            function calculateTotal() {
+                var total = 0;
+                $('.amount').each(function () {
+                    total += parseFloat($(this).val()) || 0;
+                });
+                $('#totalAmount').text('$' + total.toFixed(2));
+            }
+
+            // Initial calculation
+            calculateTotal();
+        });
+    </script>
+}
