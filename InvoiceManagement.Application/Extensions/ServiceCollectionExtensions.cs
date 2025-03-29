@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using InvoiceManagement.Application.Interfaces;
+﻿using InvoiceManagement.Application.Interfaces;
 using InvoiceManagement.Application.Services;
 using System.Reflection;
 

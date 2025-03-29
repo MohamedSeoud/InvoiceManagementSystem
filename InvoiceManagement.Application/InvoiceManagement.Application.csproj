@@ -15,9 +15,4 @@
     <ProjectReference Include="..\InvoiceManagement.Core\InvoiceManagement.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validation\" />
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
 </Project>

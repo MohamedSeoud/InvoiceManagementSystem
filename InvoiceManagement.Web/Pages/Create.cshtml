@@ -175,7 +175,6 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function () {
-            // Add new item
             $('#addItem').click(function () {
                 var index = $('.item-row').length;
                 var newItem = `
@@ -219,7 +218,6 @@
                 `;
                 $('#itemsContainer').append(newItem);
 
-                // Reinitialize validation
                 var form = $('#invoiceForm');
                 form.removeData('validator');
                 form.removeData('unobtrusiveValidation');
@@ -228,7 +226,6 @@
                 calculateTotal();
             });
 
-            // Remove item
             $(document).on('click', '.remove-item', function () {
                 if ($('.item-row').length > 1) {
                     $(this).closest('.item-row').remove();
@@ -239,7 +236,6 @@
                 }
             });
 
-            // Calculate amount when quantity or price changes
             $(document).on('input', '.quantity, .unit-price', function () {
                 var row = $(this).closest('.item-row');
                 var quantity = parseFloat(row.find('.quantity').val()) || 0;
@@ -258,14 +254,13 @@
                 return;
             }
 
-            // Submit form via AJAX
             $.ajax({
                 url: '/api/invoices',
                 type: 'POST',
                 data: JSON.stringify($(this).serializeObject()),
                 contentType: 'application/json',
                 success: function (response) {
-                    window.location.href = '/'; // Redirect to home after success
+                    window.location.href = '/'; 
                 },
                 error: function (xhr) {
                     alert('Error saving invoice: ' + xhr.responseText);
@@ -273,7 +268,6 @@
             });
         });
 
-            // Reindex items for model binding
             function reindexItems() {
                 $('.item-row').each(function (index) {
                     $(this).find('input[name*="Description"]').attr('name', `Invoice.Items[${index}].Description`);
@@ -281,20 +275,17 @@
                     $(this).find('input[name*="UnitPrice"]').attr('name', `Invoice.Items[${index}].UnitPrice`);
                     $(this).find('input[name*="Amount"]').attr('name', `Invoice.Items[${index}].Amount`);
 
-                    // Update validation message targets
                     $(this).find('span[data-valmsg-for*="Description"]').attr('data-valmsg-for', `Invoice.Items[${index}].Description`);
                     $(this).find('span[data-valmsg-for*="Quantity"]').attr('data-valmsg-for', `Invoice.Items[${index}].Quantity`);
                     $(this).find('span[data-valmsg-for*="UnitPrice"]').attr('data-valmsg-for', `Invoice.Items[${index}].UnitPrice`);
                 });
 
-                // Reinitialize validation
                 var form = $('#invoiceForm');
                 form.removeData('validator');
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
             }
 
-            // Calculate total amount
             function calculateTotal() {
                 var total = 0;
                 $('.amount').each(function () {
@@ -303,7 +294,6 @@
                 $('#totalAmount').text('$' + total.toFixed(2));
             }
 
-            // Initial calculation
             calculateTotal();
         });
     </script>
